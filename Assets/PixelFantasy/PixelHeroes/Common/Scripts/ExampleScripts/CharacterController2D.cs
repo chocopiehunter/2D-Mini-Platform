@@ -20,7 +20,7 @@ namespace Assets.PixelFantasy.PixelHeroes.Common.Scripts.ExampleScripts
         private Collider2D _collider;
         private Rigidbody2D _rigidbody;
         private CharacterAnimation _animation;
-        
+
         private bool _jump;
         private bool _crouch;
 
@@ -36,7 +36,7 @@ namespace Assets.PixelFantasy.PixelHeroes.Common.Scripts.ExampleScripts
             var state = _animation.GetState();
 
             if (state == CharacterState.Die || state == CharacterState.Block || state == CharacterState.Climb) return;
-            
+
             var velocity = _rigidbody.linearVelocity;
 
             if (Input.x == 0)
@@ -64,7 +64,7 @@ namespace Assets.PixelFantasy.PixelHeroes.Common.Scripts.ExampleScripts
                 velocity.x = Mathf.MoveTowards(velocity.x, Input.x * maxSpeed, acceleration * Time.fixedDeltaTime);
                 Turn(velocity.x);
             }
-            
+
             if (IsGrounded)
             {
                 _crouch = Input.y < 0;
@@ -132,7 +132,9 @@ namespace Assets.PixelFantasy.PixelHeroes.Common.Scripts.ExampleScripts
 
         public void OnCollisionEnter2D(Collision2D collision)
         {
-            if (collision.contacts.All(i => i.point.y <= _collider.bounds.min.y))
+            // [¼öÁ¤] Ä¸½¶ ÄÝ¶óÀÌ´õÀÇ µÕ±Ù ¹Ù´Ú ¿ÀÂ÷¸¦ Èí¼öÇÏ±â À§ÇØ ¹öÆÛ¸¦ 0.2f·Î ´Ã¸³´Ï´Ù.
+            // ÀÌ·¸°Ô ÇÏ¸é Ä¸½¶ÀÌ ¶¥¿¡ ´ê´Â ¼ø°£ ¿ÀÂ÷ ¾øÀÌ Áï½Ã ÂøÁö(IsGrounded = true)¸¦ ÀÎ½ÄÇÕ´Ï´Ù.
+            if (collision.contacts.Any(i => i.point.y <= _collider.bounds.min.y + 0.2f))
             {
                 IsGrounded = true;
                 _ground = collision.collider;
